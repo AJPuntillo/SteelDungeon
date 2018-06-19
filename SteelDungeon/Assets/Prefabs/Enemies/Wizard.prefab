@@ -164,7 +164,7 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0.12, y: 0.02}
@@ -189,7 +189,7 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -289,6 +289,7 @@ MonoBehaviour:
   attackSpeed: 1.5
   stunDuration: 0.5
   moveSpeed: 50
+  hurtOnTouch: 0
   attacking: 0
   dead: 0
   flipped: 0

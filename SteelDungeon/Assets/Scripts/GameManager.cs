@@ -73,7 +73,7 @@ public class GameManager : MonoBehaviour {
         }
 
         //Generate a new map based on a random number
-        currentStage = (GameObject)Instantiate(stages[rand]);
+        currentStage = Instantiate(stages[rand]);
         stageActive = true;
         currentInt = rand;
 

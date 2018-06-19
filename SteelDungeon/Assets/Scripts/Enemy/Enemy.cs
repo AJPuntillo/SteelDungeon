@@ -13,6 +13,7 @@ public class Enemy : MonoBehaviour {
     public float attackSpeed = 1;
     public float stunDuration = 0.5f;
     public float moveSpeed = 50;
+    public bool hurtOnTouch = false;
 
     // Enemy status and timers
     [HideInInspector]
@@ -62,11 +63,15 @@ public class Enemy : MonoBehaviour {
             Hit(other.gameObject.transform.parent.GetComponent<Player>().damage);
         }
 
-        if (other.tag == "Player")
+        // code for players getting hurt if they touch an enemy
+        if (hurtOnTouch)
         {
-            if (other.gameObject.transform.parent.GetComponent<Player>() != null)
+            if (other.tag == "Player")
             {
-                other.gameObject.transform.parent.GetComponent<Player>().Hit(damage);
+                if (other.gameObject.transform.parent.GetComponent<Player>() != null)
+                {
+                    other.gameObject.transform.parent.GetComponent<Player>().Hit(damage);
+                }
             }
         }
     }

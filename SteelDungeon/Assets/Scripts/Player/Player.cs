@@ -15,6 +15,7 @@ public class Player : MonoBehaviour {
     public float attackSpeed = 1;
     public float stunDuration = 0.5f;
     public float moveSpeed = 50;
+    public float attackMovementSpeedMod = 0.3f;
 
     // Player status and timers
     [HideInInspector]
@@ -30,6 +31,10 @@ public class Player : MonoBehaviour {
     private SpriteRenderer spriteRenderer;
     private Rigidbody2D rigidBody2D;
 
+    // Use Crossplatform Input
+    [HideInInspector]
+    public bool UseCrossplatformInput = false;
+
     // Use this for initialization
     void Start () {
         // Get Components
@@ -43,7 +48,6 @@ public class Player : MonoBehaviour {
         Physics2D.IgnoreLayerCollision(8, 9, true);
         Physics2D.IgnoreLayerCollision(8, 10, true);
         Physics2D.IgnoreLayerCollision(9, 10, true);
-        Physics2D.IgnoreLayerCollision(8, 11, true);
     }
 	
 	// Update is called once per frame
@@ -56,54 +60,71 @@ public class Player : MonoBehaviour {
         UpdateAttackTimer();
         // Update facing direction and walking animation
         UpdateDirection();
-        /*
-        float h = CrossPlatformInputManager.GetAxis("Horizontal");
-        float v = CrossPlatformInputManager.GetAxis("Vertical");
 
-        h *= 0.4f;
-        v *= 0.4f;
+        if (UseCrossplatformInput)
+        {
+            float h = CrossPlatformInputManager.GetAxis("Horizontal");
+            float v = CrossPlatformInputManager.GetAxis("Vertical");
 
-        if (!attacking && !dead)
-        {
-            rigidBody2D.velocity = new Vector3(h * moveSpeed * Time.deltaTime, v * moveSpeed * Time.deltaTime, 0);
-        }
+            h *= 0.4f;
+            v *= 0.4f;
 
-        if (CrossPlatformInputManager.GetAxis("Attack") > 0 && !dead)
-        {
-            Attack();
-        }
-        */
-        float h2 = Input.GetAxis("Horizontal");
-        float v2 = Input.GetAxis("Vertical");
+            if (!attacking && !dead)
+            {
+                rigidBody2D.velocity = new Vector3(h * moveSpeed * Time.deltaTime, v * moveSpeed * Time.deltaTime, 0);
+            }
+            else if (attacking && !dead)
+            {
+                h *= attackMovementSpeedMod;
+                v *= attackMovementSpeedMod;
+                rigidBody2D.velocity = new Vector3(h * moveSpeed * Time.deltaTime, v * moveSpeed * Time.deltaTime, 0);
+            }
 
-        if (!attacking && !dead)
-        {
-            rigidBody2D.velocity = new Vector3(h2 * moveSpeed * Time.deltaTime, v2 * moveSpeed * Time.deltaTime, 0);
-        }
+            if (CrossPlatformInputManager.GetAxis("Attack") > 0 && !dead)
+            {
+                Attack();
+            }
 
-        if (Input.GetAxis("Attack") > 0 && !dead)
-        {
-            Attack();
-        }
-        /*
-        if (CrossPlatformInputManager.GetButtonDown("Attack") && GameObject.FindWithTag("PlayerUI").transform.GetChild(3).gameObject.activeSelf == true)
-        {
-            MainMenu();
-        }
+            if (CrossPlatformInputManager.GetButtonDown("Attack") && GameObject.FindWithTag("PlayerUI").transform.GetChild(3).gameObject.activeSelf == true)
+            {
+                MainMenu();
+            }
 
-        if (CrossPlatformInputManager.GetButtonDown("Item") && GameObject.FindWithTag("PlayerUI").transform.GetChild(3).gameObject.activeSelf == true)
-        {
-            RestartGame();
+            if (CrossPlatformInputManager.GetButtonDown("Item") && GameObject.FindWithTag("PlayerUI").transform.GetChild(3).gameObject.activeSelf == true)
+            {
+                RestartGame();
+            }
         }
-        */
-        if (Input.GetButtonDown("Attack") && GameObject.FindWithTag("PlayerUI").transform.GetChild(3).gameObject.activeSelf == true)
+        else
         {
-            MainMenu();
-        }
+            float h = Input.GetAxis("Horizontal");
+            float v = Input.GetAxis("Vertical");
 
-        if (Input.GetButtonDown("Item") && GameObject.FindWithTag("PlayerUI").transform.GetChild(3).gameObject.activeSelf == true)
-        {
-            RestartGame();
+            if (!attacking && !dead)
+            {
+                rigidBody2D.velocity = new Vector3(h * moveSpeed * Time.deltaTime, v * moveSpeed * Time.deltaTime, 0);
+            }
+            else if (attacking && !dead)
+            {
+                h *= attackMovementSpeedMod;
+                v *= attackMovementSpeedMod;
+                rigidBody2D.velocity = new Vector3(h * moveSpeed * Time.deltaTime, v * moveSpeed * Time.deltaTime, 0);
+            }
+
+            if (Input.GetAxis("Attack") > 0 && !dead)
+            {
+                Attack();
+            }
+
+            if (Input.GetButtonDown("Attack") && GameObject.FindWithTag("PlayerUI").transform.GetChild(3).gameObject.activeSelf == true)
+            {
+                MainMenu();
+            }
+
+            if (Input.GetButtonDown("Item") && GameObject.FindWithTag("PlayerUI").transform.GetChild(3).gameObject.activeSelf == true)
+            {
+                RestartGame();
+            }
         }
 
         if (health > maxHealth)
@@ -147,16 +168,19 @@ public class Player : MonoBehaviour {
 
     void UpdateDirection()
     {
-        // Direction
-        if (rigidBody2D.velocity.x < -0.1)
+        if (!attacking)
         {
-            spriteRenderer.flipX = true;
-            hitBox.transform.localScale = new Vector3(-1, 1, 1);
-        }
-        else if (rigidBody2D.velocity.x > 0.1)
-        {
-            spriteRenderer.flipX = false;
-            hitBox.transform.localScale = new Vector3(1, 1, 1);
+            // Direction
+            if (rigidBody2D.velocity.x < -0.1)
+            {
+                spriteRenderer.flipX = true;
+                hitBox.transform.localScale = new Vector3(-1, 1, 1);
+            }
+            else if (rigidBody2D.velocity.x > 0.1)
+            {
+                spriteRenderer.flipX = false;
+                hitBox.transform.localScale = new Vector3(1, 1, 1);
+            }
         }
 
         // Animation
@@ -181,7 +205,7 @@ public class Player : MonoBehaviour {
                 tempAS = 0.2f;
             }
             attackTimer = animator.GetCurrentAnimatorClipInfo(0)[0].clip.length * tempAS;
-            rigidBody2D.velocity = Vector3.zero;
+            //rigidBody2D.velocity = Vector3.zero;
             animator.speed = animator.speed / tempAS;
             animator.SetTrigger("Attack");
         }

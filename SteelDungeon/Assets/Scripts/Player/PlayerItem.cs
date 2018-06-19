@@ -35,18 +35,21 @@ public class PlayerItem : MonoBehaviour {
 	void Update () {
         // Update speical weapon (ex. projectiles)
         weapon.UseSpecialWeapon(gameObject.GetComponent<Player>());
+
         // Update item on button down
-        /*
-		if(CrossPlatformInputManager.GetAxis("Item") > 0)
+        if (gameObject.GetComponent<Player>().UseCrossplatformInput)
         {
-            consumable.UseConsumable(gameObject.GetComponent<Player>());
+            if (CrossPlatformInputManager.GetAxis("Item") > 0)
+            {
+                consumable.UseConsumable(gameObject.GetComponent<Player>());
+            }
         }
-        */
-        if (Input.GetButtonDown("Item"))
-        {
-            consumable.UseConsumable(gameObject.GetComponent<Player>());
+        else {
+            if (Input.GetButtonDown("Item"))
+            {
+                consumable.UseConsumable(gameObject.GetComponent<Player>());
+            }
         }
-        
     }
 
     public void ApplyBuffs()
