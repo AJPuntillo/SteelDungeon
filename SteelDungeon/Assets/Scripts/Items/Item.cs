@@ -38,14 +38,21 @@ public class Item : MonoBehaviour {
     void Start()
     {
         playerUI = GameObject.FindWithTag("PlayerUI");
-        statsText = playerUI.transform.GetChild(2).GetChild(0).GetComponent<Text>();
-
-        if (text != null)
+        if (playerUI == null)
         {
-            text.SetActive(false);
+            Debug.Log("Player UI not found");
+            enabled = false;
         }
+        else {
+            statsText = playerUI.transform.GetChild(2).GetChild(0).GetComponent<Text>();
 
-        CreateItem();
+            if (text != null)
+            {
+                text.SetActive(false);
+            }
+
+            CreateItem();
+        }
     }
     
     void OnTriggerEnter2D(Collider2D other)

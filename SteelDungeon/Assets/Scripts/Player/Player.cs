@@ -16,10 +16,13 @@ public class Player : MonoBehaviour {
     public float stunDuration = 0.5f;
     public float moveSpeed = 50;
     public float attackMovementSpeedMod = 0.3f;
+    public float knockback = 1;
 
     // Player status and timers
     [HideInInspector]
     public bool dead = false;
+    [HideInInspector]
+    public bool gameOver = false;
     private bool stunned = false;
     private bool attacking = false;
     private float stunTimer = 0;
@@ -85,12 +88,12 @@ public class Player : MonoBehaviour {
                 Attack();
             }
 
-            if (CrossPlatformInputManager.GetButtonDown("Attack") && GameObject.FindWithTag("PlayerUI").transform.GetChild(3).gameObject.activeSelf == true)
+            if (CrossPlatformInputManager.GetButtonDown("Attack") && gameOver)
             {
                 MainMenu();
             }
 
-            if (CrossPlatformInputManager.GetButtonDown("Item") && GameObject.FindWithTag("PlayerUI").transform.GetChild(3).gameObject.activeSelf == true)
+            if (CrossPlatformInputManager.GetButtonDown("Item") && gameOver)
             {
                 RestartGame();
             }
@@ -116,12 +119,12 @@ public class Player : MonoBehaviour {
                 Attack();
             }
 
-            if (Input.GetButtonDown("Attack") && GameObject.FindWithTag("PlayerUI").transform.GetChild(3).gameObject.activeSelf == true)
+            if (Input.GetButtonDown("Attack") && gameOver)
             {
                 MainMenu();
             }
 
-            if (Input.GetButtonDown("Item") && GameObject.FindWithTag("PlayerUI").transform.GetChild(3).gameObject.activeSelf == true)
+            if (Input.GetButtonDown("Item") && gameOver)
             {
                 RestartGame();
             }
@@ -205,7 +208,6 @@ public class Player : MonoBehaviour {
                 tempAS = 0.2f;
             }
             attackTimer = animator.GetCurrentAnimatorClipInfo(0)[0].clip.length * tempAS;
-            //rigidBody2D.velocity = Vector3.zero;
             animator.speed = animator.speed / tempAS;
             animator.SetTrigger("Attack");
         }
@@ -247,7 +249,7 @@ public class Player : MonoBehaviour {
         spriteRenderer.color = Color.white;
     }
 
-    public void Hit(float enemyDamage)
+    public void Hit(float enemyDamage, Transform enemy)
     {
         if (!stunned && !dead)
         {
@@ -270,7 +272,10 @@ public class Player : MonoBehaviour {
                 StartCoroutine(FlashRed(0.1f));
             }
             health -= trueDamage;
-            stunTimer = stunDuration;            
+            stunTimer = stunDuration;
+            Vector2 direction = transform.position - enemy.position;
+            direction = direction.normalized;
+            rigidBody2D.AddForce(direction * 0.02f * knockback);        
         }
     }
 
@@ -289,7 +294,7 @@ public class Player : MonoBehaviour {
     {
         if (other.tag == "EnemyWeapon")
         {
-            Hit(other.gameObject.transform.parent.GetComponent<Enemy>().damage);
+            Hit(other.gameObject.transform.parent.GetComponent<Enemy>().damage, other.transform);
         }
     }
 

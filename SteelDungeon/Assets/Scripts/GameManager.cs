@@ -36,6 +36,9 @@ public class GameManager : MonoBehaviour {
 
     void Awake ()
     {
+        // Create player
+        player = Instantiate(player, playerSpawn.position, playerSpawn.rotation);
+        player.name = "Player";
         //Generate a random Map which the scene loads
         GenerateTileMap();
     }

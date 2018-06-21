@@ -70,7 +70,7 @@ public class Enemy : MonoBehaviour {
             {
                 if (other.gameObject.transform.parent.GetComponent<Player>() != null)
                 {
-                    other.gameObject.transform.parent.GetComponent<Player>().Hit(damage);
+                    other.gameObject.transform.parent.GetComponent<Player>().Hit(damage, transform);
                 }
             }
         }
